@@ -14,10 +14,19 @@ var (
 
 func createTables() error {
 	const usersTable = `
-		create table if not exists users(
+		CREATE TABLE IF NOT EXISTS users(
 			id integer primary key autoincrement,
 			username text,
 			password text
+		);
+		`
+	const threadsTable = `
+		CREATE TABLE IF NOT EXISTS threads (
+    		id INTEGER PRIMARY KEY AUTOINCREMENT,
+    		title TEXT NOT NULL,
+    		username TEXT NOT NULL,
+    		content TEXT NOT NULL,
+    		created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 		);
 		`
 
@@ -25,6 +34,12 @@ func createTables() error {
 	if err != nil {
 		return err
 	}
+
+	_, err = db.Exec(threadsTable)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -33,8 +48,9 @@ func CreateInitialDB() error {
 		return fmt.Errorf("failed to create tables: %w", err)
 	}
 
-	user := User{Username: "admin", Password: "admin"}
-	if err := CreateUser(&user); err != nil {
+	user := User{Name: "administrator", Email: "admin@forum.ru", Username: "admin", Password: "admin"}
+	_, err := CreateUser(&user)
+	if err != nil {
 		return fmt.Errorf("failed to create administrator: %w", err)
 	}
 

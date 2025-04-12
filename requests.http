@@ -1,0 +1,23 @@
+// signUp
+curl -X POST http://localhost:8080/api/user/signup \
+    -H "Content-Type: application/json" \
+    -d '{"username": "vlad", "password": "vlad"}'
+
+// signIn
+curl -X POST http://localhost:8080/api/user/signin \
+    -H "Content-Type: application/json" \
+    -d '{"username": "vlad", "password": "vlad"}'
+
+// create thread
+curl -X POST http://localhost:8080/api/thread \
+    -H 'cookie: Token=61ab999e909dbafc62d0' \
+    -H "Content-Type: application/json" \
+    -d '{"title": "Second thread", "username": "vlad", "content": "Hello, world! 2"}'
+
+// get all threads
+curl -X GET http://localhost:8080/api/thread \
+    -H 'cookie: Token=61ab999e909dbafc62d0'
+
+// get thread/{threadID}
+curl -X GET http://localhost:8080/api/thread/1 \
+    -H 'cookie: Token=61ab999e909dbafc62d0'

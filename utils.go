@@ -1,12 +1,15 @@
 package main
 
-import "golang.org/x/crypto/bcrypt"
+import (
+	"crypto/md5"
+	"encoding/hex"
+)
 
 func StartsWith(s, prefix string) bool {
 	return (len(s) >= len(prefix)) && (s[:len(prefix)] == prefix)
 }
 
-func HashPassword(password string) (string, error) {
-	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 10)
-	return string(bytes), err
+func HashPassword(password string) string {
+	hash := md5.Sum([]byte(password))
+	return hex.EncodeToString(hash[:])
 }
