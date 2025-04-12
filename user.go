@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"text/template"
 	"time"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -95,57 +96,67 @@ func UserSignupHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func UserSigninPageHandler(w http.ResponseWriter, r *http.Request) {
-	const pageFormat = `
-<!DOCTYPE html>
-<head>
-	<title>Sign in</title>
-</head>
-<body>
-	<h1>Web Forum</h1>
-	<h2>Sign in</h2>
-	<form method="POST" action="/api/user/signin">
-		<label>Username:
-			<input type="username" name="Username" required>
-		</label>
-		<br></br>
-		<label>Password:
-			<input type="password" name="Password" required>
-		</label>
-		<br></br>
-		<input type="submit" value="Sign in">
-	</form>
-</body>
-</html>
-`
+	// 	const pageFormat = `
+	// <!DOCTYPE html>
+	// <head>
+	// 	<title>Sign in</title>
+	// </head>
+	// <body>
+	// 	<h1>Web Forum</h1>
+	// 	<h2>Sign in</h2>
+	// 	<form method="POST" action="/api/user/signin">
+	// 		<label>Username:
+	// 			<input type="username" name="Username" required>
+	// 		</label>
+	// 		<br></br>
+	// 		<label>Password:
+	// 			<input type="password" name="Password" required>
+	// 		</label>
+	// 		<br></br>
+	// 		<input type="submit" value="Sign in">
+	// 	</form>
+	// </body>
+	// </html>
+	// `
 
-	w.Header().Add("Content-Type", "text/html")
-	w.Write([]byte(pageFormat))
+	// 	w.Header().Add("Content-Type", "text/html")
+	// 	w.Write([]byte(pageFormat))
+
+	t, _ := template.ParseFiles("html/signin.html")
+	if err := t.Execute(w, nil); err != nil {
+		log.Println("failed to load signin page")
+	}
 }
 
 func UserSignupPageHandler(w http.ResponseWriter, r *http.Request) {
-	const pageFormat = `
-<!DOCTYPE html>
-<head>
-	<title>Sign in</title>
-</head>
-<body>
-	<h1>Web Forum</h1>
-	<h2>Sign up</h2>
-	<form method="POST" action="/api/user/signup">
-		<label>Username:
-			<input type="username" name="Username" required>
-		</label>
-		<br></br>
-		<label>Password:
-			<input type="password" name="Password" required>
-		</label>
-		<br></br>
-		<input type="submit" value="Sign up">
-	</form>
-</body>
-</html>
-`
+	// 	const pageFormat = `
+	// <!DOCTYPE html>
+	// <head>
+	// 	<title>Sign in</title>
+	// </head>
+	// <body>
+	// 	<h1>Web Forum</h1>
+	// 	<h2>Sign up</h2>
+	// 	<form method="POST" action="/api/user/signup">
+	// 		<label>Username:
+	// 			<input type="username" name="Username" required>
+	// 		</label>
+	// 		<br></br>
+	// 		<label>Password:
+	// 			<input type="password" name="Password" required>
+	// 		</label>
+	// 		<br></br>
+	// 		<input type="submit" value="Sign up">
+	// 	</form>
+	// </body>
+	// </html>
+	// `
 
-	w.Header().Add("Content-Type", "text/html")
-	w.Write([]byte(pageFormat))
+	// 	w.Header().Add("Content-Type", "text/html")
+	// 	w.Write([]byte(pageFormat))
+
+	t, _ := template.ParseFiles("html/signup.html")
+	if err := t.Execute(w, nil); err != nil {
+		log.Println("failed to load signup page")
+	}
 }

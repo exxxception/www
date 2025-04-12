@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Войти</title>
+</head>
+<body>
+  <header>
+    <div class="site-title">Бончуслуги</div>
+  </header>
+
+  <div class="form-container">
+    <h2>Вход</h2>
+    <form method="post" action="/api/user/signin">
+      <input type="text" name="Username" placeholder="Имя пользователя" required>
+      <br></br>
+      <input type="password" name="Password" placeholder="Пароль" required>
+      <br></br>
+      <button type="submit">Войти</button>
+    </form>
+    <div class="form-footer">
+      Нет аккаунта? <a href="/signup">Зарегистрироваться</a>
+    </div>
+  </div>
+</body>
+</html>

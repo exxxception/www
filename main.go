@@ -1,9 +1,13 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
+	"text/template"
+)
+
+var (
+	fileServer http.Handler
 )
 
 func HandlePageRequest(w http.ResponseWriter, r *http.Request, path string) {
@@ -38,6 +42,8 @@ func (rt *Router) RouterFunc(w http.ResponseWriter, r *http.Request) {
 		HandlePageRequest(w, r, path)
 	case StartsWith(path, "/api"):
 		HandleAPIRequest(w, r, path[len("/api"):])
+	case StartsWith(path, "/html"):
+		fileServer.ServeHTTP(w, r)
 	}
 }
 
@@ -46,39 +52,54 @@ func (rt *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func IndexPageHandler(w http.ResponseWriter, r *http.Request) {
-	var indexPage = `
-<!DOCTYPE html>
-<head>
-	<title>Web Forum</title>
-</head>
-<body>
-	<h1>Welcome</h1>
-	<a href="/signin">Sign in</a>
-	<a href="/signup">Sign up</a>
-</body>
-</html>
-`
+	// 	var indexPage = `
+	// <!DOCTYPE html>
+	// <head>
+	// 	<title>Web Forum</title>
+	// </head>
+	// <body>
+	// 	<h1>Welcome</h1>
+	// 	<a href="/signin">Sign in</a>
+	// 	<a href="/signup">Sign up</a>
+	// </body>
+	// </html>
+	// `
+
+	// 	row, err := r.Cookie("Token")
+	// 	if err == nil {
+	// 		session, err := GetSessionFromToken(row.Value)
+	// 		if err == nil {
+	// 			indexPage = fmt.Sprintf(`
+	// <!DOCTYPE html>
+	// <head>
+	// 	<title>Web Forum</title>
+	// </head>
+	// <body>
+	// 	<h1>Welcome, %s</h1>
+	// 	<a href="/">Logout</a>
+	// </body>
+	// </html>
+	// `, session.User.Username)
+	// 		}
+	// 	}
+
+	// 	w.Header().Add("Content-Type", "text/html")
+	// 	w.Write([]byte(indexPage))
 
 	row, err := r.Cookie("Token")
-	if err == nil {
-		session, err := GetSessionFromToken(row.Value)
-		if err == nil {
-			indexPage = fmt.Sprintf(`
-<!DOCTYPE html>
-<head>
-	<title>Web Forum</title>
-</head>
-<body>
-	<h1>Welcome, %s</h1>
-	<a href="/">Logout</a>
-</body>
-</html>
-`, session.User.Username)
-		}
+	if err != nil {
+		log.Println("failed to get cookie")
 	}
 
-	w.Header().Add("Content-Type", "text/html")
-	w.Write([]byte(indexPage))
+	_, err = GetSessionFromToken(row.Value)
+	if err == nil {
+		GetThread(w, r)
+	} else {
+		t, _ := template.ParseFiles("html/index.html")
+		if err := t.Execute(w, nil); err != nil {
+			log.Println("failed to load page")
+		}
+	}
 }
 
 func main() {
@@ -86,6 +107,8 @@ func main() {
 		log.Fatalf("Failed to open DB: %v", err)
 	}
 	defer CloseDB()
+
+	fileServer = http.StripPrefix("/html", http.FileServer(http.Dir("html")))
 
 	router := &Router{}
 	log.Println("Server start...")
